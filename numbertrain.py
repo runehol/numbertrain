@@ -5,12 +5,9 @@ import subprocess
 import random
 import sys
 import time
+import argparse
 
-def main(args=sys.argv):
-    voice_name = 'Amelie'
-    low_limit = 0
-    high_limit = 100
-    timeout = 15
+def run(voice_name, low_limit, high_limit, timeout):
     rand = random.SystemRandom()
     
     suspend_list = []
@@ -29,7 +26,7 @@ def main(args=sys.argv):
                 number = random.randrange(low_limit, high_limit)
                 wrong_count = 0
 
-            pr = subprocess.Popen(['say', '-v', voice_name, "%d" % number])
+            pr = subprocess.Popen(['say', '-v', voice_name, "'%d'" % number])
 
             answer = input("What was said? ")
             if len(answer) > 0 and (answer[0] == "q" or answer[0] == "e"):
@@ -51,7 +48,18 @@ def main(args=sys.argv):
     finally:
         pass
     
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-v", "--voice", default="Amelie", help="Select the voice for the OS X speech synthesiser (default: Amelie)")
+    parser.add_argument("--low-limit", type=int, default=0, help="Lowest number that can be generated (default: 0)")
+    parser.add_argument("--high-limit", type=int, default=100, help="Highest number that can be generated (default: 100)")
 
+    args = parser.parse_args()
+    
+
+    
+    
+    run(args.voice, args.low_limit, args.high_limit, 15)
 
 if __name__ == "__main__":
     main()
