@@ -26,11 +26,17 @@ def run(voice_name, low_limit, high_limit, timeout):
                 number = random.randrange(low_limit, high_limit)
                 wrong_count = 0
 
-            pr = subprocess.Popen(['say', '-v', voice_name, "'%d'" % number])
+            retry = True
+            while retry:
+                pr = subprocess.Popen(['say', '-v', voice_name, "'%d'" % number])
+                answer = input("What was said? ")
 
-            answer = input("What was said? ")
-            if len(answer) > 0 and (answer[0] == "q" or answer[0] == "e"):
-                break
+                retry = False
+                if len(answer) > 0 and (answer[0] == "q" or answer[0] == "e"):
+                    sys.exit()
+                if len(answer) > 0 and (answer[0] == "r"):
+                    retry = True
+            
 
             try:
                 num_answer = int(answer)
@@ -50,7 +56,7 @@ def run(voice_name, low_limit, high_limit, timeout):
     
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-v", "--voice", default="Amelie", help="Select the voice for the OS X speech synthesiser (default: Amelie)")
+    parser.add_argument("-v", "--voice", default="Amelie", help='Select the voice for the OS X speech synth. To see the alternatives on your system, run "say -v ?" (default: Amelie)')
     parser.add_argument("--low-limit", type=int, default=0, help="Lowest number that can be generated (default: 0)")
     parser.add_argument("--high-limit", type=int, default=100, help="Highest number that can be generated (default: 100)")
 
